@@ -18,13 +18,11 @@ RUN composer require \
     open-telemetry/sdk \
     open-telemetry/opentelemetry-auto-laravel \
     open-telemetry/exporter-otlp \
-    open-telemetry/transport-http \
     php-http/guzzle7-adapter \
     --no-interaction \
     --no-scripts \
     --update-no-dev \
-    --ignore-platform-req=ext-opentelemetry \
-    --ignore-platform-req=ext-protobuf
+    --ignore-platform-reqs
 
 COPY . .
 
