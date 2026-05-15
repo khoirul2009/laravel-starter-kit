@@ -1,0 +1,13 @@
+# compose.yaml
+services:
+  laravel-app:
+    image: ${APP_IMAGE:-ghcr.io/OWNER/REPO:latest}
+    build:
+      context: .
+    entrypoint: php artisan octane:frankenphp --workers=4 --max-requests=200
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./storage:/app/storage
