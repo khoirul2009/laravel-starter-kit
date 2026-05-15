@@ -14,6 +14,16 @@ RUN composer install \
     --optimize-autoloader \
     --no-scripts
 
+RUN composer require \
+    open-telemetry/sdk \
+    open-telemetry/opentelemetry-auto-laravel \
+    open-telemetry/exporter-otlp \
+    open-telemetry/transport-http \
+    php-http/guzzle7-adapter \
+    --no-interaction \
+    --no-scripts \
+    --update-no-dev
+
 COPY . .
 
 RUN composer dump-autoload --optimize
@@ -49,7 +59,8 @@ RUN install-php-extensions \
     opcache \
     intl \
     zip \
-    bcmath
+    bcmath \
+    opentelemetry
 
 COPY . /app
 
@@ -57,15 +68,15 @@ COPY --from=vendor /app/vendor /app/vendor
 COPY --from=frontend /app/public/build /app/public/build
 
 RUN mkdir -p \
-      /app/storage/framework/cache/data \
-      /app/storage/framework/sessions \
-      /app/storage/framework/views \
-      /app/storage/framework/testing \
-      /app/storage/app/public \
-      /app/storage/app/private \
-      /app/storage/logs \
-      /app/bootstrap/cache \
- && chmod -R ug+rwX /app/storage /app/bootstrap/cache
+    /app/storage/framework/cache/data \
+    /app/storage/framework/sessions \
+    /app/storage/framework/views \
+    /app/storage/framework/testing \
+    /app/storage/app/public \
+    /app/storage/app/private \
+    /app/storage/logs \
+    /app/bootstrap/cache \
+    && chmod -R ug+rwX /app/storage /app/bootstrap/cache
 
 # RUN php artisan config:cache \
 #     && php artisan route:cache \
