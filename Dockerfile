@@ -56,8 +56,19 @@ COPY . /app
 COPY --from=vendor /app/vendor /app/vendor
 COPY --from=frontend /app/public/build /app/public/build
 
+RUN mkdir -p \
+      /app/storage/framework/cache/data \
+      /app/storage/framework/sessions \
+      /app/storage/framework/views \
+      /app/storage/framework/testing \
+      /app/storage/app/public \
+      /app/storage/app/private \
+      /app/storage/logs \
+      /app/bootstrap/cache \
+ && chmod -R ug+rwX /app/storage /app/bootstrap/cache
+
 # RUN php artisan config:cache \
 #     && php artisan route:cache \
 #     && php artisan view:cache
 
-ENTRYPOINT ["php", "artisan", "octane:start --watch"]
+ENTRYPOINT ["php", "artisan", "octane:frankenphp"]
