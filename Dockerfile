@@ -22,7 +22,9 @@ RUN composer require \
     php-http/guzzle7-adapter \
     --no-interaction \
     --no-scripts \
-    --update-no-dev
+    --update-no-dev \
+    --ignore-platform-req=ext-opentelemetry \
+    --ignore-platform-req=ext-protobuf
 
 COPY . .
 
