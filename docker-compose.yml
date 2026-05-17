@@ -1,14 +1,23 @@
-# compose.yaml
 services:
   laravel-app:
-    image: ${APP_IMAGE:-ghcr.io/khoirul2009/laravel-starter-kit:latest}
-    entrypoint: php artisan octane:frankenphp --workers=4 --max-requests=200 --host=0.0.0.0 --port=8000
+    image: laravel-app:v1
+    container_name: laravel_frankenphp
+    restart: unless-stopped
     ports:
-      - "8000:8000"
-    env_file:
-      - .env
+      - "8001:8000"
     volumes:
-      - laravel-storage:/app/storage
+      - .:/app
+      - sqlite_data:/app/database/sqlite_db
+    environment:
+      - OTEL_PHP_AUTOLOAD_ENABLED=true
+      - OTEL_SERVICE_NAME=laravel-app
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_LOGS_EXPORTER=otlp
+      - OTEL_METRICS_EXPORTER=otlp
+      - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://192.168.136.201:5080/api/default
+      - OTEL_EXPORTER_OTLP_HEADERS=Authorization=Basic cm9vdEBleGFtcGxlLmNvbTpoUFRHcG5pNXhaejBodDRY
 
 volumes:
-  laravel-storage:
+  sqlite_data:
+    driver: local

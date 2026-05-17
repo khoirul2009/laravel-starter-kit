@@ -1,36 +1,5 @@
 # =========================
-# Composer dependencies
-# =========================
-FROM composer:2 AS vendor
-
-WORKDIR /app
-
-COPY composer.json composer.lock ./
-
-RUN composer install \
-    --no-dev \
-    --no-interaction \
-    --prefer-dist \
-    --optimize-autoloader \
-    --no-scripts
-
-RUN composer require \
-    open-telemetry/sdk \
-    open-telemetry/opentelemetry-auto-laravel \
-    open-telemetry/exporter-otlp \
-    php-http/guzzle7-adapter \
-    --no-interaction \
-    --no-scripts \
-    --update-no-dev \
-    --ignore-platform-reqs
-
-COPY . .
-
-RUN composer dump-autoload --optimize
-
-
-# =========================
-# Node build for Inertia/Vite
+# 1. Node build for Inertia/Vite
 # =========================
 FROM node:24-alpine AS frontend
 
@@ -44,28 +13,53 @@ COPY . .
 
 RUN npm run build
 
-
 # =========================
-# Runtime FrankenPHP
+# 2. Runtime & Dependency Build (FrankenPHP PHP 8.4)
 # =========================
-FROM dunglas/frankenphp
+FROM dunglas/frankenphp:php8.4 AS runtime
 
 WORKDIR /app
 
+# Install PHP extensions
 RUN install-php-extensions \
     pcntl \
     pdo_mysql \
+    pdo_sqlite \
     redis \
     opcache \
     intl \
     zip \
     bcmath \
+    sockets \
     opentelemetry
 
-COPY . /app
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-COPY --from=vendor /app/vendor /app/vendor
+COPY composer.json composer.lock ./
+
+RUN composer install \
+    --no-dev \
+    --no-interaction \
+    --prefer-dist \
+    --optimize-autoloader \
+    --no-scripts
+
+RUN composer require \
+    open-telemetry/sdk \
+    open-telemetry/exporter-otlp \
+    open-telemetry/opentelemetry-auto-slim \
+    open-telemetry/opentelemetry-auto-psr18 \
+    open-telemetry/opentelemetry-auto-laravel \
+    php-http/guzzle7-adapter \
+    --no-interaction \
+    --no-scripts \
+    --update-no-dev
+
+COPY . /app
 COPY --from=frontend /app/public/build /app/public/build
+
+# Optimation Autoload
+RUN composer dump-autoload --optimize
 
 RUN mkdir -p \
     /app/storage/framework/cache/data \
@@ -78,8 +72,5 @@ RUN mkdir -p \
     /app/bootstrap/cache \
     && chmod -R ug+rwX /app/storage /app/bootstrap/cache
 
-# RUN php artisan config:cache \
-#     && php artisan route:cache \
-#     && php artisan view:cache
 
 ENTRYPOINT ["php", "artisan", "octane:frankenphp"]

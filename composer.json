@@ -11,7 +11,13 @@
         "inertiajs/inertia-laravel": "^3.1",
         "laravel/framework": "^12.0",
         "laravel/octane": "^2.17",
-        "laravel/tinker": "^2.10.1"
+        "laravel/tinker": "^2.10.1",
+        "open-telemetry/exporter-otlp": "^1.4",
+        "open-telemetry/opentelemetry-auto-laravel": "^1.7",
+        "open-telemetry/opentelemetry-auto-pdo": "^0.4.0",
+        "open-telemetry/opentelemetry-auto-psr18": "^1.2",
+        "open-telemetry/opentelemetry-auto-slim": "^1.4",
+        "open-telemetry/sdk": "^1.14"
     },
     "require-dev": {
         "laravel/pail": "^1.2.2",
@@ -80,7 +86,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "tbachert/spi": true
         }
     },
     "minimum-stability": "stable",
