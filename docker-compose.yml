@@ -1,7 +1,10 @@
 services:
   laravel-app:
-    image: laravel-app:v1
-    container_name: laravel_frankenphp
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: laravel-observe:v1
+    container_name: laravel-observe
     restart: unless-stopped
     ports:
       - "8001:8000"
@@ -9,14 +12,40 @@ services:
       - .:/app
       - sqlite_data:/app/database/sqlite_db
     environment:
-      - OTEL_PHP_AUTOLOAD_ENABLED=true
-      - OTEL_SERVICE_NAME=laravel-app
-      - OTEL_TRACES_EXPORTER=otlp
-      - OTEL_LOGS_EXPORTER=otlp
-      - OTEL_METRICS_EXPORTER=otlp
-      - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://192.168.136.201:5080/api/default
-      - OTEL_EXPORTER_OTLP_HEADERS=Authorization=Basic cm9vdEBleGFtcGxlLmNvbTpoUFRHcG5pNXhaejBodDRY
+      - OTEL_PHP_AUTOLOAD_ENABLED=${OTEL_PHP_AUTOLOAD_ENABLED}
+      - OTEL_SERVICE_NAME=${OTEL_SERVICE_NAME}
+      - OTEL_TRACES_EXPORTER=${OTEL_TRACES_EXPORTER}
+      - OTEL_LOGS_EXPORTER=${OTEL_LOGS_EXPORTER}
+      - OTEL_METRICS_EXPORTER=${OTEL_METRICS_EXPORTER}
+      - OTEL_EXPORTER_OTLP_PROTOCOL=${OTEL_EXPORTER_OTLP_PROTOCOL}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+      - OTEL_EXPORTER_OTLP_HEADERS=${OTEL_EXPORTER_OTLP_HEADERS}
+
+  otel-collector:
+    image: otel/opentelemetry-collector
+    container_name: laravel-otel-collector
+    restart: unless-stopped
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otelcol/config.yaml
+
+    ports:
+      # OTLP
+      - "4317:4317"
+      - "4318:4318"
+
+      # Internal endpoints
+      - "1777:1777"
+      - "55679:55679"
+      - "8888:8888"
+
+      # Jaeger
+      # - "14250:14250"
+      # - "6831:6831/udp"
+      # - "6832:6832/udp"
+      # - "14268:14268"
+
+      # Zipkin
+      # - "9411:9411"
 
 volumes:
   sqlite_data:
