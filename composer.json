@@ -12,12 +12,15 @@
         "laravel/framework": "^12.0",
         "laravel/octane": "^2.17",
         "laravel/tinker": "^2.10.1",
+        "monolog/monolog": "^3.10",
         "open-telemetry/exporter-otlp": "^1.4",
         "open-telemetry/opentelemetry-auto-laravel": "^1.7",
         "open-telemetry/opentelemetry-auto-pdo": "^0.4.0",
         "open-telemetry/opentelemetry-auto-psr18": "^1.2",
         "open-telemetry/opentelemetry-auto-slim": "^1.4",
-        "open-telemetry/sdk": "^1.14"
+        "open-telemetry/opentelemetry-logger-monolog": "^1.2",
+        "open-telemetry/sdk": "^1.14",
+        "promphp/prometheus_client_php": "^2.15"
     },
     "require-dev": {
         "laravel/pail": "^1.2.2",

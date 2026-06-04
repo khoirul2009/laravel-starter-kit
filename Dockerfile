@@ -25,7 +25,6 @@ RUN install-php-extensions \
     pcntl \
     pdo_mysql \
     pdo_sqlite \
-    redis \
     opcache \
     intl \
     zip \
@@ -47,9 +46,11 @@ RUN composer install \
 RUN composer require \
     open-telemetry/sdk \
     open-telemetry/exporter-otlp \
-    open-telemetry/opentelemetry-auto-slim \
-    open-telemetry/opentelemetry-auto-psr18 \
     open-telemetry/opentelemetry-auto-laravel \
+    open-telemetry/opentelemetry-auto-psr18 \
+    open-telemetry/opentelemetry-auto-slim \
+    monolog/monolog \
+    open-telemetry/opentelemetry-logger-monolog \
     php-http/guzzle7-adapter \
     --no-interaction \
     --no-scripts \

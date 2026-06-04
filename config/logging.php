@@ -133,6 +133,18 @@ return [
             'level'  => env('OPENOBSERVE_LOG_LEVEL', 'debug'),
         ],
 
+        'otel' => [
+            'driver' => 'monolog',
+            'handler' => \OpenTelemetry\Contrib\Logs\Monolog\Handler::class,
+            'level'   => 'debug',
+        ],
+
+        'stack' => [
+            'driver'   => 'stack',
+            'channels' => ['daily', 'otel'],
+            'ignore_exceptions' => false,
+        ],
+
     ],
 
 ];
